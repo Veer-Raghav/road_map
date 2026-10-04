@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Shakti Setu — 18 Day Command Center</title>
+<style>
+:root{--bg:#07111f;--panel:#0d1b2e;--panel2:#10243b;--line:#1d3552;--text:#edf5ff;--muted:#8fa6bf;--accent:#4fd1c5;--accent2:#7aa7ff;--danger:#ff6b7a;--warn:#f5c96a}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#06101c,#0a1727 55%,#081321);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+header{padding:24px 30px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(7,17,31,.94);backdrop-filter:blur(12px);z-index:5}
+.brand{display:flex;justify-content:space-between;gap:20px;align-items:center}.brand h1{margin:0;font-size:25px}.brand p{margin:5px 0 0;color:var(--muted);font-size:13px}
+button,select,input{font:inherit}button{cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:9px;padding:9px 12px}button:hover{border-color:var(--accent)}
+main{max-width:1400px;margin:auto;padding:24px}
+.hero{display:grid;grid-template-columns:1.5fr .5fr;gap:18px;margin-bottom:18px}.card{background:rgba(13,27,46,.88);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 10px 35px #0003}
+.hero h2{font-size:30px;margin:0 0 8px}.hero p{color:var(--muted);line-height:1.55}.big{font-size:42px;font-weight:800}.progress{height:10px;background:#16283e;border-radius:99px;overflow:hidden}.progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{padding:16px;border:1px solid var(--line);border-radius:12px;background:#0a1727}.stat b{font-size:24px}.stat span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.toolbar select,.toolbar input{background:#0a1727;border:1px solid var(--line);color:var(--text);padding:10px;border-radius:9px}
+.sprint{margin:24px 0}.sprint-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:12px}.sprint h2{margin:0}.sprint small{color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.member{min-width:0}.member-head{padding:14px;background:#10243b;border:1px solid var(--line);border-radius:12px 12px 0 0}.member-head b{display:block}.member-head span{color:var(--muted);font-size:11px}.tasklist{border:1px solid var(--line);border-top:0;border-radius:0 0 12px 12px;background:#0b192a;padding:8px}
+.task{display:flex;gap:9px;padding:10px 6px;border-bottom:1px solid #17304a;font-size:13px;line-height:1.35}.task:last-child{border-bottom:0}.task input{accent-color:var(--accent);margin-top:2px;flex:0 0 auto}.task.done label{text-decoration:line-through;color:#6f859d}.tag{font-size:10px;color:var(--muted);margin-left:auto;white-space:nowrap}
+.deliverable{margin-top:14px;border:1px solid #2b4968;background:#0b1d31;border-radius:12px;padding:15px}.deliverable b{color:var(--accent)}
+.phase{display:flex;gap:8px;align-items:center;margin:12px 0;color:var(--muted);font-size:12px}.dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.footer{margin:28px 0;color:var(--muted);font-size:12px;text-align:center}
+@media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}.hero{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:650px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr}header{position:static}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div><h1>SHakti Setu · Execution Roadmap</h1><p> · shared task ownership · live completion tracking</p></div><div><button onclick="resetAll()">Reset demo</button></div></div></header>
+<main>
+<section class="hero">
+<div class="card">
+<div class="progress"><i id="overallBar"></i></div>
+<p id="overallText">0% complete</p>
+<div class="stats">
+<div class="stat"><b id="doneCount">0</b><span>Tasks complete</span></div>
+<div class="stat"><b id="totalCount">0</b><span>Total tasks</span></div>
+<div class="stat"><b id="blockedCount">0</b><span>Blocked / attention</span></div>
+<div class="stat"><b id="daysDone">0/18</b><span>Days completed</span></div>
+</div>
+</div>
+<div class="card">
+<b>Target</b><p>Industry-ready pitch prototype</p>
+<div class="phase"><i class="dot"></i> Days 1–3 Foundation</div>
+<div class="phase"><i class="dot"></i> Days 4–7 Vertical slice</div>
+<div class="phase"><i class="dot"></i> Days 8–10 SaaS polish</div>
+<div class="phase"><i class="dot"></i> Days 11–12 Hardware</div>
+<div class="phase"><i class="dot"></i> Days 13–14 Testing</div>
+<div class="phase"><i class="dot"></i> Days 15–16 Pitch hardening</div>
+<div class="phase"><i class="dot"></i> Day 17 Rehearsal</div>
+<div class="phase"><i class="dot"></i> Day 18 Freeze</div>
+</div>
+</section>
+
+<div class="toolbar">
+<select id="sprintFilter" onchange="render()"><option value="all">All sprints</option><option value="1">Days 1–3</option><option value="2">Days 4–7</option><option value="3">Days 8–10</option><option value="4">Days 11–12</option><option value="5">Days 13–14</option><option value="6">Days 15–16</option><option value="7">Day 17</option><option value="8">Day 18</option></select>
+<select id="memberFilter" onchange="render()"><option value="all">All members</option></select>
+<input id="search" placeholder="Search tasks..." oninput="render()">
+</div>
+<div id="board"></div>
+<div class="footer">Prototype v1 · Progress is stored in this browser. For team-wide cross-device visibility, connect the shared backend in the README.</div>
+</main>
+<script>
+const members=[
+["MANTHAN","CTO & Founder"],
+["SHREYANSH","AI / Computer Vision Lead"],
+["ANANYA","Frontend, Backend & Systems Engineer"],
+["TANYA","COO & Product Engineer"],
+["MAHESHWAR","CEO & Business Development Lead"]
+];
+const sprints=[
+{n:1,title:"DAYS 1–3 — LOCK THE FOUNDATION",deliverable:"AI + SaaS architecture frozen. No major architecture changes after Day 3.",tasks:{
+"MANTHAN":["Freeze system architecture","Define AI → Event → API contract","Define final demo workflow","Define event schema","Integrate existing AI modules"],
+"SHREYANSH":["Stabilize Detection","Stabilize Tracking","Stabilize Pose","Fix VideoMAE / action recognition issues","Stabilize threat / event generation","Establish 5 final Shakti actions / events"],
+"ANANYA":["Finalize React dashboard","Finalize Express / API","Database schema","Event API","Camera API","Evidence API","Validate current Windows build"],
+"TANYA":["Select prototype camera","Select edge computer","Power supply","Storage","Network connectivity","Enclosure / mounting","Start physical hardware assembly"],
+"MAHESHWAR":["Finalize target customer","Define problem statement","Define product positioning","Identify 10–20 potential pilot customers","Start collecting customer feedback","Begin pitch deck"]}},
+{n:2,title:"DAYS 4–7 — BUILD THE COMPLETE VERTICAL SLICE",deliverable:"Complete chain: Camera → Frame → AI → Detection → Tracking → Pose → Action → Threat → Event JSON → API → Database → Dashboard → Evidence.",tasks:{
+"MANTHAN":["AI pipeline orchestration","Real-time / near-real-time processing","Event generation","Camera → AI integration"],
+"SHREYANSH":["Action recognition","Violence / action classification","False-positive reduction","Confidence thresholds","Temporal smoothing","Event triggering"],
+"ANANYA":["Build /events","Build /cameras","Build /evidence","Build /health","Event database","Dashboard event feed","Video / evidence streaming","Integrate evidence-video route into the full flow"],
+"TANYA":["Assemble camera + edge computer","Integrate network + power + storage","Run AI application on actual hardware"],
+"MAHESHWAR":["Website","Brand","Product story","Pitch deck","Demo script","Customer use cases","Pricing concept"]}},
+{n:3,title:"DAYS 8–10 — MAKE IT LOOK LIKE A REAL SaaS",deliverable:"Customer-ready SaaS experience with dashboard, camera view, incidents, evidence and analytics.",tasks:{
+"MANTHAN":["Review SaaS architecture against live workflow","Remove architecture bottlenecks"],
+"SHREYANSH":["Tune event confidence","Tune action labels","Validate threat-level logic"],
+"ANANYA":["Dashboard: cameras","Dashboard: live / recorded video","Dashboard: active incidents","Dashboard: recent events","Dashboard: threat level","Dashboard: event timeline","Dashboard: evidence","Dashboard: analytics","Event card with camera / time / action / confidence / tracks / severity","Camera page with online / FPS / AI status / people / events","Evidence page with incident / timestamp / action / confidence / persons / playback"],
+"TANYA":["Product UI / hardware integration checks","Edge status visibility"],
+"MAHESHWAR":["Brand polish","Website polish","Product story","Customer use-case copy","Pricing concept"]}},
+{n:4,title:"DAYS 11–12 — HARDWARE + EDGE INTEGRATION",deliverable:"Physical Shakti Setu edge appliance: camera + computing + storage + power + network + status + enclosure + branding.",tasks:{
+"MANTHAN":["Validate edge architecture","Validate edge-to-cloud integration"],
+"SHREYANSH":["Run AI stack on edge","Validate inference performance"],
+"ANANYA":["Connect edge events to SaaS","Validate cloud / dashboard ingestion"],
+"TANYA":["Camera","Computing unit","Storage","Power","Network connection","Status indicator","Proper enclosure / casing","Shakti Setu branding","End-to-end edge deployment"],
+"MAHESHWAR":["Hardware product positioning","Hardware demo story","Pilot deployment narrative"]}},
+{n:5,title:"DAYS 13–14 — FULL SYSTEM TESTING",deliverable:"Freeze new features and validate complete scenarios.",tasks:{
+"MANTHAN":["Run full integration test","Validate event flow","Validate failure handling"],
+"SHREYANSH":["Test normal activity / no false alert","Test fighting","Test punching","Test falling","Test multiple people","Verify confidence / temporal smoothing"],
+"ANANYA":["Verify track IDs","Verify event association","Verify evidence","Verify dashboard","Test camera disconnect / OFFLINE state"],
+"TANYA":["Hardware stress test","Power / network test","Camera disconnect test"],
+"MAHESHWAR":["Demo acceptance checklist","Customer-facing test scenarios","Document known limitations"]}},
+{n:6,title:"DAYS 15–16 — PITCH HARDENING",deliverable:"Only fix issues that can break the demo.",tasks:{
+"MANTHAN":["Remove technical blockers","Lock architecture","Lock model configuration","Lock demo startup flow"],
+"SHREYANSH":["Remove obvious false positives","Lock thresholds","Lock demo videos","Prepare fallback recorded footage"],
+"ANANYA":["Fix UI bugs","Fix API failures","Fix evidence playback","Fix database issues","Improve loading / error states"],
+"TANYA":["Cable management","Enclosure","Power","Camera positioning","Boot procedure","Network","Physical branding"],
+"MAHESHWAR":["Final pitch deck","Demo script","Market","Business model","Pricing","Competition","Roadmap","Team slide","Financial requirements","Investor questions"]}},
+{n:7,title:"DAY 17 — FULL DRESS REHEARSAL",deliverable:"Treat rehearsal as the actual pitch. Everyone performs their assigned role.",tasks:{
+"MANTHAN":["Explain 5-layer AI architecture","Technical Q&A rehearsal"],
+"SHREYANSH":["Live AI demonstration: detection → tracking → pose → action → threat","AI Q&A rehearsal"],
+"ANANYA":["Live SaaS demonstration: dashboard → event → evidence","Backend / SaaS Q&A rehearsal"],
+"TANYA":["Present physical edge device","Hardware Q&A rehearsal"],
+"MAHESHWAR":["Opening: problem","Solution: Shakti Setu","Business: market → customer → revenue → roadmap","Investor Q&A rehearsal","Full pitch timing"]}},
+{n:8,title:"DAY 18 — FREEZE",deliverable:"No major development. Pitch-ready system and backups.",tasks:{
+"MANTHAN":["Final architecture check","Backup build","Single-command startup"],
+"SHREYANSH":["Final AI check","Backup demo footage","Model / config backup"],
+"ANANYA":["Final SaaS check","Backup database","Final evidence check"],
+"TANYA":["Hardware check","Laptop check","Camera check","Network check","Power check"],
+"MAHESHWAR":["Final pitch deck","Presentation rehearsal","Investor FAQ","Final demo script"]}}
+];
+let state=JSON.parse(localStorage.getItem("shaktiSetuRoadmap")||"{}");
+function key(s,m,i){return `s${s}-m${m}-t${i}`}
+function toggle(k){state[k]=!state[k];localStorage.setItem("shaktiSetuRoadmap",JSON.stringify(state));render()}
+function resetAll(){if(confirm("Reset all local progress?")){state={};localStorage.removeItem("shaktiSetuRoadmap");render()}}
+function render(){
+const sf=document.getElementById("sprintFilter").value,mf=document.getElementById("memberFilter").value,q=document.getElementById("search").value.toLowerCase();
+document.getElementById("memberFilter").innerHTML='<option value="all">All members</option>'+members.map(x=>`<option>${x[0]}</option>`).join("");
+document.getElementById("memberFilter").value=mf;
+let total=0,done=0,html="";
+sprints.filter(s=>sf==="all"||+sf===s.n).forEach(s=>{
+html+=`<section class="sprint"><div class="sprint-head"><div><h2>${s.title}</h2><small>Completion: ${s.n===1?"Foundation":s.n===2?"Vertical slice":s.n===3?"SaaS":s.n===4?"Hardware":s.n===5?"Testing":s.n===6?"Pitch hardening":s.n===7?"Rehearsal":"Freeze"}</small></div></div><div class="grid">`;
+members.filter(m=>mf==="all"||m[0]===mf).forEach((m,mi)=>{
+let tasks=(s.tasks[m[0]]||[]).filter(t=>t.toLowerCase().includes(q));
+html+=`<div class="member"><div class="member-head"><b>${m[0]}</b><span>${m[1]}</span></div><div class="tasklist">`;
+tasks.forEach((task,ti)=>{
+const original=(s.tasks[m[0]]||[]).indexOf(task),k=key(s.n,mi,original),d=!!state[k];total++;if(d)done++;
+html+=`<div class="task ${d?"done":""}"><input type="checkbox" ${d?"checked":""} onchange="toggle('${k}')"><label>${task}</label></div>`;
+});
+html+=`</div></div>`;
+});
+html+=`</div><div class="deliverable"><b>Day ${s.n===1?"3":s.n===2?"7":s.n===3?"10":s.n===4?"12":s.n===5?"14":s.n===6?"16":s.n===7?"17":"18"} deliverable:</b> ${s.deliverable}</div></section>`;
+});
+document.getElementById("board").innerHTML=html;
+let allTasks=0,allDone=0; sprints.forEach(s=>Object.values(s.tasks).forEach(arr=>arr.forEach((_,i)=>{allTasks++;if(state[key(s.n,members.findIndex(m=>m[0]===Object.keys(s.tasks).find(x=>s.tasks[x]===arr)),i)]){} })));
+/* robust totals */
+allTasks=0;allDone=0;sprints.forEach(s=>Object.entries(s.tasks).forEach(([mn,arr])=>arr.forEach((_,i)=>{allTasks++;const mi=members.findIndex(m=>m[0]===mn);if(state[key(s.n,mi,i)])allDone++;})));
+const pct=allTasks?Math.round(allDone/allTasks*100):0;
+document.getElementById("overallBar").style.width=pct+"%";document.getElementById("overallText").textContent=pct+"% complete";
+document.getElementById("doneCount").textContent=allDone;document.getElementById("totalCount").textContent=allTasks;document.getElementById("blockedCount").textContent="0";
+let days=0;sprints.forEach(s=>{let a=0,b=0;Object.entries(s.tasks).forEach(([mn,arr])=>arr.forEach((_,i)=>{a++;const mi=members.findIndex(m=>m[0]===mn);if(state[key(s.n,mi,i)])b++;}));if(a&&a===b)days+=(s.n===1?3:s.n===2?4:s.n===3?3:s.n===4?2:s.n===5?2:s.n===6?2:1)});
+document.getElementById("daysDone").textContent=days+"/18";
+}
+render();
+</script>
+</body>
+</html>
